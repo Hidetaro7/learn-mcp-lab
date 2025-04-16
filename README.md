@@ -1,6 +1,6 @@
 # MCP サーバー + UI（モノレポ構成）
 
-このリポジトリは、Modular Command Processing (MCP) を実装したローカル AI サーバーと、React UI フロントエンドからなるプロジェクトです。
+このリポジトリは、Model Context Protocol (MCP) を実装したローカル AI サーバーと、React UI フロントエンドからなるプロジェクトです。
 
 ---
 
