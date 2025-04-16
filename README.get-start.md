@@ -28,7 +28,7 @@ pnpm -v
 ### 2. このリポジトリをクローンし、`get-start` ブランチに切り替え
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/Hidetaro7/learn-mcp-lab.git
 cd your-repo
 git checkout get-start
 ```

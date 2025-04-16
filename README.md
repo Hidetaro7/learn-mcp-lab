@@ -1,6 +1,8 @@
 # MCP サーバー + UI（モノレポ構成）
 
-このリポジトリは、Model Context Protocol (MCP) を実装したローカル AI サーバーと、React UI フロントエンドからなるプロジェクトです。
+このリポジトリは、Model Context Protocol（MCP）を実装したローカル AI サーバーと、React UI フロントエンドからなるプロジェクトです。
+
+もしも最初から学習する場合、 [https://github.com/Hidetaro7/learn-mcp-lab/tree/get-start](https://github.com/Hidetaro7/learn-mcp-lab/tree/get-start) にブランチを切り替えて、最小構成サンプルを試してみてください。
 
 ---
 
