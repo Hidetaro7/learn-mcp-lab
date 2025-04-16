@@ -1,0 +1,27 @@
+{
+  "name": "mcp-lab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "dev:server": "pnpm --filter mcp-server dev",
+    "dev:ui": "pnpm --filter mcp-ui dev",
+    "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:ui\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hono": "^4.7.6",
+    "openai": "^4.93.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "concurrently": "^8.0.0"
+  }
+}
