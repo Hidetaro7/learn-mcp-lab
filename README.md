@@ -2,7 +2,7 @@
 
 これは Model Context Protocol（MCP） の**最小構成サンプル**です。
 
-OpenAI GPT-4 function calling 機能を活用し、  
+[OpenAI GPT-4 function calling](https://platform.openai.com/docs/guides/function-calling) 機能を活用し、  
 自然言語の命令からローカルのフォルダ作成やメモ保存を自動化します。
 
 ---
