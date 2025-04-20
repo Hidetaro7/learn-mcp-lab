@@ -42,6 +42,8 @@ pnpm install
 
 ### 4. OpenAI API キーを `.env` に追加
 
+OpenAI API キーの取得場所 [API keys - OpenAI API](https://platform.openai.com/api-keys)
+
 ```bash
 echo "OPENAI_API_KEY=sk-..." > .env
 ```
