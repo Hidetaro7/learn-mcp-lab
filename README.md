@@ -1,108 +1,100 @@
-# MCP サーバー + UI（モノレポ構成）
+# MCP Get-Start
 
-このリポジトリは、Model Context Protocol（MCP）を実装したローカル AI サーバーと、React UI フロントエンドからなるプロジェクトです。
+これは Model Context Protocol（MCP） の**最小構成サンプル**です。
 
----
-
-## 📁 ディレクトリ構成
-
-```
-apps/
-├── mcp-server/    # Hono + OpenAI で構成されたバックエンドAPI
-└── mcp-ui/        # Vite + React で構成されたチャットUIフロントエンド
-```
+[OpenAI GPT-4 function calling](https://platform.openai.com/docs/guides/function-calling) 機能を活用し、  
+自然言語の命令からローカルのフォルダ作成やメモ保存を自動化します。
 
 ---
 
-## 🚀 起動方法（ローカル）
+## ✅ このブランチの目的
 
-プロジェクトルートで以下を実行：
+- 最小限の構成で **MCP の本質を体験**
+- UI なし、**cURL のみで試せる**
+- コードは 1 ファイル（`index.ts`）
+- 使用関数は `createFolder` と `writeNote` の 2 つのみ
+
+---
+
+## 📦 準備手順
+
+### 1. Node.js 22+ & pnpm がインストールされていることを確認
+
+```bash
+node -v
+pnpm -v
+```
+
+### 2. このリポジトリをクローンし、`get-start` ブランチに切り替え
+
+```bash
+git clone https://github.com/Hidetaro7/learn-mcp-lab.git
+cd your-repo
+git checkout get-start
+cd apps/mcp-server
+```
+
+### 3. パッケージのインストール
 
 ```bash
 pnpm install
+```
+
+### 4. OpenAI API キーを `.env` に追加
+
+OpenAI API キーの取得場所 [API keys - OpenAI API](https://platform.openai.com/api-keys)
+
+```bash
+echo "OPENAI_API_KEY=sk-..." > .env
+```
+
+---
+
+## 🚀 サーバー起動
+
+```bash
 pnpm dev
 ```
 
-これにより、`mcp-server`（ポート 3000）と `mcp-ui`（ポート 5173）が同時に起動します。
-
 ---
 
-## 🌐 MCP サーバーの機能概要
+## 🧪 テスト実行（cURL）
 
-- `createFolder`：ローカルにフォルダを作成
-- `writeNote`：フォルダ内にテキストファイルを保存
-- `readNote`：テキストファイルの読み取り
-- `listNotes`：フォルダ内のファイル一覧取得
-- `summarizeUrl`：URL の内容を要約し保存
-- `summarizeFolder`：フォルダ内のメモをまとめて要約
-- `summarizeAndSaveFolder`：フォルダ内メモを要約して別フォルダに日付付き保存
-
-すべて OpenAI API を通じて自然言語で実行可能です。
-
----
-
-## 🧠 UI の機能
-
-- チャット形式で自然言語による操作が可能
-- ファイル一覧を取得して表示
-- ファイル名クリックで中身を読み込み
-- フォルダ・タイトル・本文を指定して保存
-- 今後：要約機能やまとめ出力、ファイル削除にも対応予定
-
----
-
-## 🔁 `/auto` エンドポイントについて
-
-`/auto` は、自然言語の命令をもとに GPT が自動で複数の処理ステップ（関数呼び出し）を計画し、順に実行するためのエンドポイントです。  
-GPT が出力する JSON プランに従って、MCP サーバーが対応する関数を自動で呼び出します。
-
----
-
-### 📡 使用例（cURL）
+### 📁 フォルダを作成
 
 ```bash
-curl -X POST http://localhost:3000/auto \
+curl -X POST http://localhost:3000/ask \
   -H "Content-Type: application/json" \
-  -d '{
-    "message": "https://news.yahoo.co.jp/pickup/6535179 を読んで、「ニュース」フォルダに保存してください。タイトルは DeepMind 天気予報 にしてください。"
-  }'
+  -d '{ "message": "新しく「test」フォルダを作ってください" }'
+```
+
+### 📝 メモを保存
+
+```bash
+curl -X POST http://localhost:3000/ask \
+  -H "Content-Type: application/json" \
+  -d '{ "message": "「test」フォルダに「今日のメモ」というタイトルで次の内容を保存して：MCPサーバーが動いた！" }'
 ```
 
 ---
 
-### ✅ 処理の流れ（例）
+## 🧠 仕組み（ざっくり）
 
-ユーザーの指示：
-
-> 「https://news.yahoo.co.jp/pickup/6535179 を読んで、“ニュース” フォルダに “DeepMind 天気予報” というタイトルで保存して」
-
-GPT が出力する JSON プラン：
-
-```json
-[
-  {
-    "function": "createFolder",
-    "arguments": { "name": "ニュース" }
-  },
-  {
-    "function": "summarizeUrl",
-    "arguments": {
-      "url": "https://news.yahoo.co.jp/pickup/6535179",
-      "folder": "ニュース",
-      "title": "DeepMind 天気予報"
-    }
-  }
-]
-```
-
-MCP サーバーがこれを受け取り、順番に関数を呼び出して実行します。
+1. ユーザーが自然言語で命令
+2. GPT-4 が対応する関数を呼び出す（function calling）
+3. `index.ts` 内の関数を実行
+4. 結果を JSON で返す
 
 ---
 
-### ℹ️ `/ask` との違い
+## 📚 次に進むには？
 
-| 項目       | `/auto`                                | `/ask`                                |
-| ---------- | -------------------------------------- | ------------------------------------- |
-| モデル制御 | 自前のプロンプトで命令                 | GPT の `function_call: "auto"` を使用 |
-| 柔軟性     | 高い（複数ステップを計画・実行できる） | 単一関数を確実に呼ぶのに適している    |
-| 利用場面   | 連続処理や複雑なワークフロー           | シンプルなチャットや UI 操作に最適    |
+- `main` ブランチには UI や多数の関数を統合したフル機能版があります
+- `readNote`, `listNotes`, `summarizeFolder` などを順に学べます
+
+---
+
+## 🏁 最後に
+
+このブランチは「**MCP の出発点**」です。  
+学びながら自由に試して、壊して、育ててください ✨
