@@ -2,6 +2,7 @@
   "name": "mcp-lab",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "workspaces": [
     "apps/*"
   ],
@@ -19,7 +20,7 @@
     "typescript": "^5.0.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@8.0.0"
+  "packageManager": "pnpm@10.9.0"
 }
