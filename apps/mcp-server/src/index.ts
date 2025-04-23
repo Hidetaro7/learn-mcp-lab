@@ -134,7 +134,8 @@ async function summarizeUrl({
     messages: [
       {
         role: "system",
-        content: "以下のHTMLを人間向けにわかりやすく要約してください。",
+        content:
+          "以下のHTMLからニュース記事の本文を特定し、要約してください。記事の本文は通常、最も長い段落やセクションに含まれています。メタデータや見出しも参考にしてください。",
       },
       { role: "user", content: html.slice(0, 12000) },
     ],
