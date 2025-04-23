@@ -117,6 +117,13 @@ export function Chat() {
     return match?.[1] ?? "不明";
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+      event.preventDefault(); // フォームのデフォルト動作を防ぐ
+      handleSend();
+    }
+  };
+
   return (
     <div style={{ padding: 20, maxWidth: 640, margin: "0 auto" }}>
       <h2>MCP チャット</h2>
@@ -165,17 +172,24 @@ export function Chat() {
           </div>
         ))}
       </div>
-
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        rows={3}
-        style={{ width: "100%", marginBottom: 8 }}
-        placeholder="自然言語で命令を入力"
-      />
-      <button onClick={handleSend} disabled={loading}>
-        {loading ? "送信中…" : "送信"}
-      </button>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSend();
+        }}
+      >
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={3}
+          style={{ width: "100%", marginBottom: 8 }}
+          placeholder="自然言語で命令を入力"
+        />
+        <button onClick={handleSend} disabled={loading}>
+          {loading ? "送信中…" : "送信"}
+        </button>
+      </form>
 
       <hr style={{ margin: "24px 0" }} />
       <h3>📥 メモを保存</h3>
