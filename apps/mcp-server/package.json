@@ -1,26 +1,31 @@
 {
   "name": "mcp-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint . --ext .ts",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hono/node-server": "^1.14.0",
-    "dotenv": "^16.5.0",
-    "hono": "^4.7.6",
-    "openai": "^4.93.0",
-    "zod": "^3.24.2"
+    "@hono/node-server": "^1.0.0",
+    "dotenv": "^16.0.0",
+    "hono": "^4.0.0",
+    "openai": "^4.0.0",
+    "zod": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "concurrently": "^8.0.0",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.3"
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
   }
 }

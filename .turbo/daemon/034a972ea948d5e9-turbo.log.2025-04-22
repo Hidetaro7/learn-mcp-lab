@@ -1,0 +1,20 @@
+2025-04-22T10:16:39.701087Z  WARN build:resolve_lockfile: turborepo_repository::package_graph::builder: Issues occurred when constructing package graph. Turbo will function, but some features may not be available: could not resolve workspaces: io error: No such file or directory (os error 2)
+2025-04-22T10:16:39.702114Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/.turbo-cookie")}
+2025-04-22T10:16:39.702125Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-04-22T10:16:39.803481Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/1.cookie")}
+2025-04-22T10:16:39.803495Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-04-22T10:17:00.303464Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("turbo.json")}
+2025-04-22T10:17:00.303483Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-04-22T10:17:00.308456Z  WARN build:resolve_lockfile: turborepo_repository::package_graph::builder: Issues occurred when constructing package graph. Turbo will function, but some features may not be available: could not resolve workspaces: io error: No such file or directory (os error 2)
+2025-04-22T10:18:18.203458Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/2.cookie")}
+2025-04-22T10:18:18.203469Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-04-22T10:18:20.002991Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mcp-ui/node_modules")}
+2025-04-22T10:18:20.003005Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("mcp-ui"), path: AnchoredSystemPathBuf("apps/mcp-ui") }}))
+2025-04-22T10:19:29.604005Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mcp-server/data/調べ物")}
+2025-04-22T10:19:29.604021Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("mcp-server"), path: AnchoredSystemPathBuf("apps/mcp-server") }}))
+2025-04-22T10:20:16.705059Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mcp-server/data/今日のニュース/2025-04-22-まとめ.txt"), AnchoredSystemPathBuf("apps/mcp-server/data/今日のニュース")}
+2025-04-22T10:20:16.705085Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("mcp-server"), path: AnchoredSystemPathBuf("apps/mcp-server") }}))
+2025-04-22T10:20:16.752084Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-04-22T10:22:34.706085Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/mcp-server/data/調べ物/今日の主な出来事.txt")}
+2025-04-22T10:22:34.706110Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("mcp-server"), path: AnchoredSystemPathBuf("apps/mcp-server") }}))
+2025-04-22T10:22:34.706137Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
