@@ -11,6 +11,7 @@ type Message = {
     lastModified: string;
   }[];
   folder?: string;
+  imageBase64?: string;
 };
 
 export function Chat() {
@@ -18,9 +19,10 @@ export function Chat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [saveFolder, setSaveFolder] = useState("");
-  const [saveTitle, setSaveTitle] = useState("");
-  const [saveContent, setSaveContent] = useState("");
+  const [lastPrompt, setLastPrompt] = useState<string | null>(null);
+  const [lastNegativePrompt, setLastNegativePrompt] = useState<string | null>(
+    null
+  );
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -30,102 +32,43 @@ export function Chat() {
     setLoading(true);
 
     try {
-      const res = await askMcp(userMessage);
-      const reply: Message = {
-        role: "assistant",
-        content: (res.message || res.summary) ?? null,
-        files: res.files ?? undefined,
-        folder: res.files ? extractFolderName(userMessage) : undefined,
-      };
+      // 1回のリクエストで完結！
+      const res = await askMcp({
+        idea: userMessage,
+        previousPrompt: lastPrompt,
+        previousNegativePrompt: lastNegativePrompt,
+      });
 
-      setMessages((prev) => [...prev, reply]);
-    } catch (e: unknown) {
-      const errorMessage =
-        e instanceof Error ? e.message : "不明なエラーが発生しました";
+      const promptToUse = res.prompt;
+      const negativeToUse = res.negativePrompt;
+      const imageBase64 = res.imageBase64;
+
+      setLastPrompt(promptToUse);
+      setLastNegativePrompt(negativeToUse);
+
+      // プロンプト表示
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: `⚠️ エラー: ${errorMessage}` },
+        { role: "assistant", content: `🎨 Prompt: ${promptToUse}` },
+      ]);
+
+      // 画像表示
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: null, imageBase64 },
+      ]);
+    } catch (e: any) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: `⚠️ エラー: ${e.message}` },
       ]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleReadNote = async (folder: string, title: string) => {
-    setLoading(true);
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", content: `${folder} の ${title} を読みたい` },
-    ]);
-
-    try {
-      const res = await askMcp(
-        `「${folder}」フォルダの「${title}」というファイルを読んで`
-      );
-      const reply: Message = {
-        role: "assistant",
-        content: res.content ?? res.message ?? "[読み取り失敗]",
-      };
-      setMessages((prev) => [...prev, reply]);
-    } catch (e: unknown) {
-      const errorMessage =
-        e instanceof Error ? e.message : "不明なエラーが発生しました";
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: `⚠️ 読み取り中にエラー: ${errorMessage}`,
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSaveNote = async () => {
-    if (!saveFolder || !saveTitle || !saveContent) return;
-    setLoading(true);
-
-    const prompt = `「${saveFolder}」フォルダに「${saveTitle}」というファイル名で次の内容を保存して：${saveContent}`;
-
-    setMessages((prev) => [...prev, { role: "user", content: prompt }]);
-
-    try {
-      const res = await askMcp(prompt);
-      const reply: Message = {
-        role: "assistant",
-        content: res.message ?? "[保存成功]",
-      };
-      setMessages((prev) => [...prev, reply]);
-      setSaveFolder("");
-      setSaveTitle("");
-      setSaveContent("");
-    } catch (e: unknown) {
-      const errorMessage =
-        e instanceof Error ? e.message : "不明なエラーが発生しました";
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: `⚠️ 保存中にエラー: ${errorMessage}` },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const extractFolderName = (msg: string): string => {
-    const match = msg.match(/「?(.+?)」?\s?フォルダ/);
-    return match?.[1] ?? "不明";
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
-      event.preventDefault(); // フォームのデフォルト動作を防ぐ
-      handleSend();
     }
   };
 
   return (
-    <div style={{ padding: 20, maxWidth: 640, margin: "0 auto" }}>
+    <div style={{ padding: 20, maxWidth: 640 }}>
       <h2>MCP チャット</h2>
       <div style={{ marginBottom: 12 }}>
         {messages.map((m, i) => (
@@ -136,38 +79,13 @@ export function Chat() {
                 {m.content}
               </div>
             )}
-            {m.files && (
-              <table
-                style={{
-                  width: "100%",
-                  marginTop: 8,
-                  borderCollapse: "collapse",
-                }}
-              >
-                <thead>
-                  <tr>
-                    <th align="left">📄 タイトル</th>
-                    <th align="left">更新日</th>
-                    <th align="right">サイズ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {m.files.map((file, idx) => (
-                    <tr key={idx}>
-                      <td
-                        style={{ cursor: "pointer", color: "#0077cc" }}
-                        onClick={() =>
-                          handleReadNote(m.folder || "不明", file.title)
-                        }
-                      >
-                        {file.title}
-                      </td>
-                      <td>{new Date(file.lastModified).toLocaleString()}</td>
-                      <td align="right">{(file.size / 1024).toFixed(1)} KB</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+            {m.imageBase64 && (
+              <img
+                src={`data:image/png;base64,${m.imageBase64}`}
+                alt="Generated"
+                style={{ maxWidth: "100%", marginTop: 8, borderRadius: 4 }}
+              />
             )}
           </div>
         ))}
@@ -181,42 +99,14 @@ export function Chat() {
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          rows={3}
-          style={{ width: "100%", marginBottom: 8 }}
+          rows={10}
+          style={{ width: "100%", marginBottom: 8, padding: "4px" }}
           placeholder="自然言語で命令を入力"
         />
-        <button onClick={handleSend} disabled={loading}>
+        <button type="submit" disabled={loading}>
           {loading ? "送信中…" : "送信"}
         </button>
       </form>
-
-      <hr style={{ margin: "24px 0" }} />
-      <h3>📥 メモを保存</h3>
-      <input
-        type="text"
-        placeholder="フォルダ名"
-        value={saveFolder}
-        onChange={(e) => setSaveFolder(e.target.value)}
-        style={{ width: "100%", marginBottom: 8 }}
-      />
-      <input
-        type="text"
-        placeholder="ファイルタイトル"
-        value={saveTitle}
-        onChange={(e) => setSaveTitle(e.target.value)}
-        style={{ width: "100%", marginBottom: 8 }}
-      />
-      <textarea
-        rows={3}
-        placeholder="保存する本文"
-        value={saveContent}
-        onChange={(e) => setSaveContent(e.target.value)}
-        style={{ width: "100%", marginBottom: 8 }}
-      />
-      <button onClick={handleSaveNote} disabled={loading}>
-        {loading ? "保存中…" : "保存する"}
-      </button>
     </div>
   );
 }
